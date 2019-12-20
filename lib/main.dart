@@ -200,10 +200,19 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             RaisedButton(
               color: Colors.green,
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  myArticles.add(Article());
+                });
+                Navigator.of(context).pop();
+              },
               child: Text('post'),
             ),
-            FlatButton(onPressed: () {}, child: Text('discard')),
+            FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('discard')),
           ],
         ),
       ],
