@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Article extends StatelessWidget {
+  //
+  //region  initializing
+
   String articleTitle = 'عنوان المقال';
   String article =
       'هذا النص الجميل يستعمل للتعليق على المقال المعين ويمكن تغييره من شخص لآخر على حسب المزاج والأشياء الأخرى مثل ';
@@ -9,6 +12,9 @@ class Article extends StatelessWidget {
     fontSize: 17,
     color: Colors.grey[700],
   );
+
+  //endregion
+
   @override
   Widget build(BuildContext context) {
     return Card(

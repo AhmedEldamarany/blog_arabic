@@ -27,6 +27,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //region intializations
   bool isMain = true;
   PageController myController = PageController(
     initialPage: 0,
@@ -42,70 +43,13 @@ class _MyHomePageState extends State<MyHomePage> {
     fontSize: 20,
   );
   List<Article> myArticles = List<Article>();
-
+//endregion
+  //
   @override
   Widget build(BuildContext context) {
-    // myController.jumpTo(1);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 10,
-        actions: <Widget>[
-          Center(child: Text(isMain ? 'الرئيسية' : 'حسابي', style: titleStyle)),
-          IconButton(
-            icon: Icon(
-              Icons.menu,
-              color: Colors.white,
-            ),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(50),
-          child: Container(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Expanded(
-                    child: FlatButton(
-                      child: Text('الرئيسية',
-                          style: isMain ? titleStyle : unselectedStyle),
-                      onPressed: () {
-                        myController.jumpToPage(0);
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: FlatButton(
-                      child: Text(
-                        'حسابي',
-                        style: !isMain ? titleStyle : unselectedStyle,
-                      ),
-                      onPressed: () {
-                        myController.jumpToPage(1);
-                      },
-                    ),
-                  ),
-                ],
-              )),
-        ),
-      ),
-      body: PageView(
-        controller: myController,
-        onPageChanged: (page) {
-          if (page == 0) {
-            setState(() {
-              isMain = true;
-            });
-          } else
-            setState(() {
-              isMain = false;
-            });
-        },
-        children: <Widget>[
-          mainScreen(),
-          ProfileScreen(),
-        ],
-      ),
+      appBar: myAppBar(),
+      body: myPageView(),
       floatingActionButton: isMain
           ? FloatingActionButton(
               onPressed: dialogeTrigger,
@@ -113,6 +57,28 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Icon(Icons.add),
             )
           : null,
+    );
+  }
+
+  //
+  //region myWidgets
+  PageView myPageView() {
+    return PageView(
+      controller: myController,
+      onPageChanged: (page) {
+        if (page == 0) {
+          setState(() {
+            isMain = true;
+          });
+        } else
+          setState(() {
+            isMain = false;
+          });
+      },
+      children: <Widget>[
+        mainScreen(),
+        ProfileScreen(),
+      ],
     );
   }
 
@@ -125,6 +91,53 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  AppBar myAppBar() {
+    return AppBar(
+      elevation: 10,
+      actions: <Widget>[
+        Center(child: Text(isMain ? 'الرئيسية' : 'حسابي', style: titleStyle)),
+        IconButton(
+          icon: Icon(
+            Icons.menu,
+            color: Colors.white,
+          ),
+        ),
+      ],
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(50),
+        child: Container(
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(
+                  child: FlatButton(
+                    child: Text('الرئيسية',
+                        style: isMain ? titleStyle : unselectedStyle),
+                    onPressed: () {
+                      myController.jumpToPage(0);
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: FlatButton(
+                    child: Text(
+                      'حسابي',
+                      style: !isMain ? titleStyle : unselectedStyle,
+                    ),
+                    onPressed: () {
+                      myController.jumpToPage(1);
+                    },
+                  ),
+                ),
+              ],
+            )),
+      ),
+    );
+  }
+  //endregion
+
+  //dialoge triggered when the fab is pressed
   dialogeTrigger() {
     var myDialog = SimpleDialog(
       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),

@@ -30,6 +30,7 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   'رامي عياش',
                   style: TextStyle(
+                      fontFamily: 'taj',
                       fontSize: 28.0,
                       color: Colors.black,
                       fontWeight: FontWeight.w700),
@@ -44,9 +45,9 @@ class ProfileScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    option(Icons.star, 'المفضلة'),
-                    option(Icons.settings, 'الإعدادت'),
-                    option(Icons.edit, 'تعديل بياناتي'),
+                    option(Icons.star, 'المفضلة', context),
+                    option(Icons.settings, 'الإعدادت', context),
+                    option(Icons.edit, 'تعديل بياناتي', context),
                   ],
                 ),
               ],
@@ -57,17 +58,25 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget option(IconData myIcon, String myString) {
+  Widget option(IconData myIcon, String myString, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Icon(
-          myIcon,
-          size: 30,
+        Container(
+          padding: EdgeInsets.all(10),
+          margin: EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(150),
+              color: Theme.of(context).primaryColor),
+          child: Icon(
+            myIcon,
+            size: 30,
+          ),
         ),
         Text(
           myString,
           style: TextStyle(
+            fontFamily: 'taj',
             fontSize: 20,
           ),
         ),
