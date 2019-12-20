@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'Article View.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -12,41 +14,31 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xffb2dfdb),
         accentColor: Color(0xFF39796b),
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MyHomePage({Key key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  bool isMain = true;
+  PageController myController = PageController(
+    initialPage: 0,
+  );
+  List<Article> myArticles = List<Article>();
 
   @override
   Widget build(BuildContext context) {
+    // myController.jumpTo(1);
     return Scaffold(
       appBar: AppBar(
         elevation: 10,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(50),
-          child: Container(
-              //   color: Colors.red,
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text('one'),
-                  Text('two'),
-                ],
-              )),
-        ),
         actions: <Widget>[
           Center(
               child: Text(
@@ -61,50 +53,53 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(50),
+          child: Container(
+              //   color: Colors.red,
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text('one'),
+                  Text('two'),
+                ],
+              )),
+        ),
       ),
       body: PageView(
+        controller: myController,
+        onPageChanged: (page) {
+          if (page == 0) {
+            setState(() {
+              isMain = true;
+            });
+          } else
+            setState(() {
+              isMain = false;
+            });
+        },
         children: <Widget>[
           mainScreen(),
           profileScreen(),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Add an article',
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: isMain
+          ? FloatingActionButton(
+              onPressed: dialogeTrigger,
+              tooltip: 'Add an article',
+              child: Icon(Icons.add),
+            )
+          : null,
     );
   }
 
   Widget mainScreen() {
-    return ListView(
-      children: <Widget>[article(), article(), article()],
-    );
-  }
-
-  Widget article() {
-    return Card(
-      elevation: 3,
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Icon(Icons.sentiment_satisfied),
-              Icon(Icons.sentiment_satisfied),
-              Icon(Icons.sentiment_satisfied),
-              Text('اسم المستخدم '),
-              CircleAvatar(),
-            ],
-          ),
-          Image.asset(
-            'images/mo1.png',
-            fit: BoxFit.fitWidth,
-          ),
-          Text(
-              'هذا النص الجميل يستعمل للتعليق على المقال المعين ويمكن تغييره من شخص لآخر على حسب المزاج والأشياء الأخرى مثل ')
-        ],
-      ),
+    return ListView.builder(
+      itemBuilder: (context, n) {
+        return myArticles[n];
+      },
+      itemCount: myArticles.length,
     );
   }
 
@@ -173,9 +168,50 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         Text(
           myString,
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(
+            fontSize: 20,
+          ),
         ),
       ],
     );
+  }
+
+  dialogeTrigger() {
+    var myDialog = SimpleDialog(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      children: <Widget>[
+        Image.asset(
+          'images/mo1.png',
+          fit: BoxFit.fitWidth,
+        ),
+        Text(
+          'اكتب تعليقاً حول الصورة',
+          textDirection: TextDirection.rtl,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: TextField(
+            decoration: InputDecoration(
+                border: UnderlineInputBorder(borderSide: BorderSide(width: 5))),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            RaisedButton(
+              color: Colors.green,
+              onPressed: () {},
+              child: Text('post'),
+            ),
+            FlatButton(onPressed: () {}, child: Text('discard')),
+          ],
+        ),
+      ],
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return myDialog;
+        });
   }
 }
