@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Color(0xffb2dfdb),
         accentColor: Color(0xFF39796b),
@@ -139,6 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //dialoge triggered when the fab is pressed
   dialogeTrigger() {
+    var localTet =
+        TextStyle(fontFamily: 'taj', fontSize: 16, color: Colors.black);
     var myDialog = SimpleDialog(
       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       children: <Widget>[
@@ -146,9 +149,13 @@ class _MyHomePageState extends State<MyHomePage> {
           'images/mo1.png',
           fit: BoxFit.fitWidth,
         ),
-        Text(
-          'اكتب تعليقاً حول الصورة',
-          textDirection: TextDirection.rtl,
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Text(
+            'اكتب تعليقاً حول الصورة',
+            style: localTet,
+            textDirection: TextDirection.rtl,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -157,25 +164,34 @@ class _MyHomePageState extends State<MyHomePage> {
                 border: UnderlineInputBorder(borderSide: BorderSide(width: 5))),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            RaisedButton(
-              color: Theme.of(context).accentColor,
-              onPressed: () {
-                setState(() {
-                  myArticles.add(Article());
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text('post'),
-            ),
-            FlatButton(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              RaisedButton(
+                color: Theme.of(context).accentColor,
                 onPressed: () {
+                  setState(() {
+                    myArticles.add(Article());
+                  });
                   Navigator.of(context).pop();
                 },
-                child: Text('discard')),
-          ],
+                child: Text(
+                  'نشر',
+                  style: titleStyle,
+                ),
+              ),
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'تجاهل',
+                    style: unselectedStyle,
+                  )),
+            ],
+          ),
         ),
       ],
     );
