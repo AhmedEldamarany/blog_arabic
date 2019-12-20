@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'Article View.dart';
+import 'Profile Screen View.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,7 +10,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
         primaryColor: Color(0xffb2dfdb),
         accentColor: Color(0xFF39796b),
@@ -31,6 +31,16 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController myController = PageController(
     initialPage: 0,
   );
+  var titleStyle = TextStyle(
+      color: Colors.white,
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'taj');
+  static var unselectedStyle = TextStyle(
+    fontFamily: 'taj',
+    color: Colors.grey,
+    fontSize: 20,
+  );
   List<Article> myArticles = List<Article>();
 
   @override
@@ -40,12 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         elevation: 10,
         actions: <Widget>[
-          Center(
-              child: Text(
-            'الرئيسية',
-            style: TextStyle(
-                color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-          )),
+          Center(child: Text(isMain ? 'الرئيسية' : 'حسابي', style: titleStyle)),
           IconButton(
             icon: Icon(
               Icons.menu,
@@ -56,13 +61,30 @@ class _MyHomePageState extends State<MyHomePage> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(50),
           child: Container(
-              //   color: Colors.red,
               height: 50,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text('one'),
-                  Text('two'),
+                  Expanded(
+                    child: FlatButton(
+                      child: Text('الرئيسية',
+                          style: isMain ? titleStyle : unselectedStyle),
+                      onPressed: () {
+                        myController.jumpToPage(0);
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: FlatButton(
+                      child: Text(
+                        'حسابي',
+                        style: !isMain ? titleStyle : unselectedStyle,
+                      ),
+                      onPressed: () {
+                        myController.jumpToPage(1);
+                      },
+                    ),
+                  ),
                 ],
               )),
         ),
@@ -81,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         children: <Widget>[
           mainScreen(),
-          profileScreen(),
+          ProfileScreen(),
         ],
       ),
       floatingActionButton: isMain
@@ -100,79 +122,6 @@ class _MyHomePageState extends State<MyHomePage> {
         return myArticles[n];
       },
       itemCount: myArticles.length,
-    );
-  }
-
-  Widget profileScreen() {
-    Size screenSize = MediaQuery.of(context).size;
-    return ListView(
-      children: <Widget>[
-        Stack(
-          children: <Widget>[
-            Container(
-              color: Color(0xFF39791b),
-              height: screenSize.height / 3.5,
-            ),
-            Column(
-              children: <Widget>[
-                SizedBox(height: screenSize.height / 6),
-                Center(
-                  child: Container(
-                    width: 140,
-                    height: 140,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage('images/mo3.jpg'),
-                            fit: BoxFit.cover),
-                        borderRadius: BorderRadius.circular(80.0),
-                        border: Border.all(color: Colors.white, width: 5.0)),
-                  ),
-                ),
-                Text(
-                  'رامي عياش',
-                  style: TextStyle(
-                      fontSize: 28.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  'mail@mymail.com',
-                  style: TextStyle(color: Color(0xFF8a000000), fontSize: 16),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    option(Icons.star, 'المفضلة'),
-                    option(Icons.settings, 'الإعدادت'),
-                    option(Icons.edit, 'تعديل بياناتي'),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget option(IconData myIcon, String myString) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Icon(
-          myIcon,
-          size: 30,
-        ),
-        Text(
-          myString,
-          style: TextStyle(
-            fontSize: 20,
-          ),
-        ),
-      ],
     );
   }
 
@@ -199,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             RaisedButton(
-              color: Colors.green,
+              color: Theme.of(context).accentColor,
               onPressed: () {
                 setState(() {
                   myArticles.add(Article());
