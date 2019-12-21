@@ -29,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   //region intializations
+
   bool isMain = true;
   PageController myController = PageController(
     initialPage: 0,
@@ -43,7 +44,9 @@ class _MyHomePageState extends State<MyHomePage> {
     color: Colors.grey,
     fontSize: 20,
   );
+  TextEditingController myInput = TextEditingController();
   List<Article> myArticles = List<Article>();
+
 //endregion
   //
   @override
@@ -160,6 +163,8 @@ class _MyHomePageState extends State<MyHomePage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: TextField(
+            controller: myInput,
+            maxLength: 150,
             decoration: InputDecoration(
                 border: UnderlineInputBorder(borderSide: BorderSide(width: 5))),
           ),
@@ -173,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Theme.of(context).accentColor,
                 onPressed: () {
                   setState(() {
-                    myArticles.add(Article());
+                    myArticles.add(Article(myInput.text));
                   });
                   Navigator.of(context).pop();
                 },

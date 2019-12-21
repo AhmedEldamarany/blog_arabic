@@ -5,15 +5,14 @@ class Article extends StatelessWidget {
   //region  initializing
 
   String articleTitle = 'عنوان المقال';
-  String article =
-      'هذا النص الجميل يستعمل للتعليق على المقال المعين ويمكن تغييره من شخص لآخر على حسب المزاج والأشياء الأخرى مثل ';
+  String article;
   var myTextStyle = TextStyle(
     fontFamily: 'taj',
     fontSize: 17,
     color: Colors.grey[700],
   );
 
-  //endregion
+  Article(this.article); //endregion
 
   @override
   Widget build(BuildContext context) {
