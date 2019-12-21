@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatelessWidget  {
   MyHomePage({Key key}) : super(key: key);
 
   //region intializations
@@ -178,6 +178,7 @@ class MyHomePage extends StatelessWidget {
                   Provider.of<ProvideMyArticle>(context)
                       .add(Article(myInput.text));
                   Navigator.of(context).pop();
+                  myInput.clear();
                 },
                 child: Text(
                   'نشر',
