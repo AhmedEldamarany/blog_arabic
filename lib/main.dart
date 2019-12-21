@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'Article View.dart';
 import 'Profile Screen View.dart';
@@ -15,19 +16,17 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xffb2dfdb),
         accentColor: Color(0xFF39796b),
       ),
-      home: MyHomePage(),
+      home: ChangeNotifierProvider<ProvideMyArticle>(
+        child: MyHomePage(),
+        create: (context) => ProvideMyArticle(),
+      ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   MyHomePage({Key key}) : super(key: key);
 
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
   //region intializations
 
   bool isMain = true;
@@ -45,7 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
     fontSize: 20,
   );
   TextEditingController myInput = TextEditingController();
-  List<Article> myArticles = List<Article>();
 
 //endregion
   //
@@ -56,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: myPageView(),
       floatingActionButton: isMain
           ? FloatingActionButton(
-              onPressed: dialogeTrigger,
+              onPressed: () => dialogeTrigger(context),
               tooltip: 'Add an article',
               child: Icon(Icons.add),
             )
@@ -71,13 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
       controller: myController,
       onPageChanged: (page) {
         if (page == 0) {
-          setState(() {
-            isMain = true;
-          });
+          isMain = true;
         } else
-          setState(() {
-            isMain = false;
-          });
+          isMain = false;
       },
       children: <Widget>[
         mainScreen(),
@@ -87,11 +81,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget mainScreen() {
-    return ListView.builder(
-      itemBuilder: (context, n) {
-        return myArticles[n];
+    return Consumer<ProvideMyArticle>(
+      builder: (context, provided, child) {
+        return ListView.builder(
+          itemBuilder: (context, n) {
+            return provided.myArticles[n];
+          },
+          itemCount: provided.myArticles.length,
+        );
       },
-      itemCount: myArticles.length,
     );
   }
 
@@ -142,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //endregion
 
   //dialoge triggered when the fab is pressed
-  dialogeTrigger() {
+  dialogeTrigger(BuildContext context) {
     var localTet =
         TextStyle(fontFamily: 'taj', fontSize: 16, color: Colors.black);
     var myDialog = SimpleDialog(
@@ -177,9 +175,8 @@ class _MyHomePageState extends State<MyHomePage> {
               RaisedButton(
                 color: Theme.of(context).accentColor,
                 onPressed: () {
-                  setState(() {
-                    myArticles.add(Article(myInput.text));
-                  });
+                  Provider.of<ProvideMyArticle>(context)
+                      .add(Article(myInput.text));
                   Navigator.of(context).pop();
                 },
                 child: Text(
@@ -205,5 +202,14 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (BuildContext context) {
           return myDialog;
         });
+  }
+}
+
+class ProvideMyArticle extends ChangeNotifier {
+  List<Article> myArticles = List<Article>();
+
+  add(Article article) {
+    myArticles.add(article);
+    notifyListeners();
   }
 }
