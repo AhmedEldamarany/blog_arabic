@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class Article extends StatelessWidget {
@@ -11,8 +13,9 @@ class Article extends StatelessWidget {
     fontSize: 17,
     color: Colors.grey[700],
   );
+  File imageFile;
 
-  Article(this.article); //endregion
+  Article(this.article, {this.imageFile}); //endregion
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +46,16 @@ class Article extends StatelessWidget {
               ],
             ),
           ),
-          Image.asset(
-            'images/mo1.png',
-            fit: BoxFit.fitWidth,
-          ),
+          imageFile != null
+              ? Image.file(
+                  imageFile,
+                  height: 200,
+                  fit: BoxFit.fitWidth,
+                )
+              : Image.asset(
+                  'images/mo1.png',
+                  //  fit: BoxFit.fitWidth,
+                ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(

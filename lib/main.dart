@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'Article View.dart';
+import 'Photographia.dart';
 import 'Profile Screen View.dart';
 
 void main() => runApp(MyApp());
@@ -17,19 +20,21 @@ class MyApp extends StatelessWidget {
         accentColor: Color(0xFF39796b),
       ),
       home: ChangeNotifierProvider<ProvideMyArticle>(
-        child: MyHomePage(),
+        child: DefaultTabController(
+          child: MyHomePage(),
+          length: 2,
+        ),
         create: (context) => ProvideMyArticle(),
       ),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget  {
+class MyHomePage extends StatelessWidget {
   MyHomePage({Key key}) : super(key: key);
 
   //region intializations
 
-  bool isMain = true;
   PageController myController = PageController(
     initialPage: 0,
   );
@@ -44,15 +49,18 @@ class MyHomePage extends StatelessWidget  {
     fontSize: 20,
   );
   TextEditingController myInput = TextEditingController();
-
+  BuildContext myContext;
+  bool myIsMain;
 //endregion
   //
   @override
   Widget build(BuildContext context) {
+    myContext = context;
+    myIsMain = Provider.of<ProvideMyArticle>(myContext).isMain;
     return Scaffold(
       appBar: myAppBar(),
       body: myPageView(),
-      floatingActionButton: isMain
+      floatingActionButton: myIsMain
           ? FloatingActionButton(
               onPressed: () => dialogeTrigger(context),
               tooltip: 'Add an article',
@@ -64,15 +72,8 @@ class MyHomePage extends StatelessWidget  {
 
   //
   //region myWidgets
-  PageView myPageView() {
-    return PageView(
-      controller: myController,
-      onPageChanged: (page) {
-        if (page == 0) {
-          isMain = true;
-        } else
-          isMain = false;
-      },
+  TabBarView myPageView() {
+    return TabBarView(
       children: <Widget>[
         mainScreen(),
         ProfileScreen(),
@@ -97,7 +98,7 @@ class MyHomePage extends StatelessWidget  {
     return AppBar(
       elevation: 10,
       actions: <Widget>[
-        Center(child: Text(isMain ? 'الرئيسية' : 'حسابي', style: titleStyle)),
+        Center(child: Text(myIsMain ? 'الرئيسية' : 'حسابي', style: titleStyle)),
         IconButton(
           icon: Icon(
             Icons.menu,
@@ -105,35 +106,21 @@ class MyHomePage extends StatelessWidget  {
           ),
         ),
       ],
-      bottom: PreferredSize(
-        preferredSize: Size.fromHeight(50),
-        child: Container(
-            height: 50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Expanded(
-                  child: FlatButton(
-                    child: Text('الرئيسية',
-                        style: isMain ? titleStyle : unselectedStyle),
-                    onPressed: () {
-                      myController.jumpToPage(0);
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: FlatButton(
-                    child: Text(
-                      'حسابي',
-                      style: !isMain ? titleStyle : unselectedStyle,
-                    ),
-                    onPressed: () {
-                      myController.jumpToPage(1);
-                    },
-                  ),
-                ),
-              ],
-            )),
+      bottom: TabBar(
+        tabs: [
+          Tab(
+            child: Text(
+              'الرئيسية',
+              style: titleStyle,
+            ),
+          ),
+          Tab(
+            child: Text(
+              'حسابي',
+              style: titleStyle,
+            ),
+          )
+        ],
       ),
     );
   }
@@ -141,14 +128,21 @@ class MyHomePage extends StatelessWidget  {
 
   //dialoge triggered when the fab is pressed
   dialogeTrigger(BuildContext context) {
+    File imageFile;
     var localTet =
         TextStyle(fontFamily: 'taj', fontSize: 16, color: Colors.black);
     var myDialog = SimpleDialog(
       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       children: <Widget>[
-        Image.asset(
-          'images/mo1.png',
-          fit: BoxFit.fitWidth,
+        InkWell(
+          child: Image.asset(
+            'images/mo1.png',
+            fit: BoxFit.fitWidth,
+          ),
+          onTap: () async {
+            File myimageFile = await Photographia().getImageFromGallery();
+            imageFile = myimageFile;
+          },
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
@@ -164,7 +158,10 @@ class MyHomePage extends StatelessWidget  {
             controller: myInput,
             maxLength: 150,
             decoration: InputDecoration(
-                border: UnderlineInputBorder(borderSide: BorderSide(width: 5))),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(width: 5),
+              ),
+            ),
           ),
         ),
         Padding(
@@ -175,8 +172,10 @@ class MyHomePage extends StatelessWidget  {
               RaisedButton(
                 color: Theme.of(context).accentColor,
                 onPressed: () {
-                  Provider.of<ProvideMyArticle>(context)
-                      .add(Article(myInput.text));
+                  Provider.of<ProvideMyArticle>(context).add(Article(
+                    myInput.text,
+                    imageFile: imageFile,
+                  ));
                   Navigator.of(context).pop();
                   myInput.clear();
                 },
@@ -208,9 +207,50 @@ class MyHomePage extends StatelessWidget  {
 
 class ProvideMyArticle extends ChangeNotifier {
   List<Article> myArticles = List<Article>();
+  bool isMain = true;
+  changeMain() {
+    if (isMain)
+      isMain = false;
+    else
+      isMain = true;
+
+    notifyListeners();
+  }
 
   add(Article article) {
     myArticles.add(article);
+
     notifyListeners();
   }
 }
+
+//PreferredSize(
+//preferredSize: Size.fromHeight(50),
+//child: Container(
+//height: 50,
+//child: Row(
+//mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//children: <Widget>[
+//Expanded(
+//child: FlatButton(
+//child: Text('الرئيسية',
+//style: myIsMain ? titleStyle : unselectedStyle),
+//onPressed: () {
+//myController.jumpToPage(0);
+//},
+//),
+//),
+//Expanded(
+//child: FlatButton(
+//child: Text(
+//'حسابي',
+//style: !myIsMain ? titleStyle : unselectedStyle,
+//),
+//onPressed: () {
+//myController.jumpToPage(1);
+//},
+//),
+//),
+//],
+//)),
+//),
