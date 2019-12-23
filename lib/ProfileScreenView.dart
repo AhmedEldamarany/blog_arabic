@@ -1,27 +1,33 @@
+import 'package:blog_arabic/ProvideMe.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
+  Size screenSize;
+
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
+    screenSize = MediaQuery.of(context).size;
+
     return ListView(
       children: <Widget>[
         Stack(
           children: <Widget>[
             Container(
               color: Color(0xFF39791b),
-              height: screenSize.height / 3.5,
+              height: screenSize.height / 4.5,
             ),
             Column(
               children: <Widget>[
-                SizedBox(height: screenSize.height / 6),
+                SizedBox(height: screenSize.height / 7.5),
                 Center(
                   child: Container(
                     width: 140,
                     height: 140,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage('images/mo3.jpg'),
+                            image: AssetImage(
+                                Provider.of<ProvideMyArticle>(context).pfp),
                             fit: BoxFit.cover),
                         borderRadius: BorderRadius.circular(80.0),
                         border: Border.all(color: Colors.white, width: 5.0)),

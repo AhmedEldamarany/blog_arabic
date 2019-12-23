@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'ProvideMe.dart';
 
 class Article extends StatelessWidget {
   //
@@ -42,7 +45,10 @@ class Article extends StatelessWidget {
                   textDirection: TextDirection.rtl,
                   style: myTextStyle.copyWith(fontWeight: FontWeight.bold),
                 ),
-                CircleAvatar(),
+                CircleAvatar(
+                  backgroundImage:
+                      AssetImage(Provider.of<ProvideMyArticle>(context).pfp),
+                ),
               ],
             ),
           ),
